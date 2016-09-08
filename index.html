@@ -1,0 +1,54 @@
+<!doctype html>
+<html>
+<head>
+    <title>Learning demonstration</title>
+    <link rel="stylesheet" type="text/css" href="style.css" />
+</head>
+<body>
+    <div id="container">
+        <div id="header">
+            <h1>How perceptron learns</h1>
+        </div>
+        <div id="graph-section">
+            <div id="graph" class="canvas-box">
+                <canvas id="graph-canvas"></canvas>
+            </div>
+            <div id="neuron" class="canvas-box">
+                <canvas id="neuron-canvas"></canvas>
+            </div>
+        </div>
+        <div id="tools">
+            <input type="file" id="input" hidden/>
+            <span class="tool" id="import">IMPORT</span>
+            <span class="tool" id="export">EXPORT</span>
+            <span class="tool" id="begin">BEGIN</span>
+            <span class="tool" id="back">BACK</span>
+            <span class="tool" id="forward">FORVARD</span>
+        </div>
+        <div id="table-section">
+            <table>
+                <thead>
+                    <tr>
+                        <td>X</td>
+                        <td>Y</td>
+                        <td>Class</td>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>1</td>
+                        <td>2</td>
+                        <td>1</td>
+                    </tr>
+                    <tr>
+                        <td>-1</td>
+                        <td>-1</td>
+                        <td>0</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
