@@ -8,7 +8,7 @@ var Neuron = function(n) {
     this.step = 0.2;
 
     for (var i = 0; i < n; i++) {
-        this.weights.push(1);
+        this.weights.push(1.0);
     }
 
     this.classify = function(input) {
@@ -29,7 +29,6 @@ var Neuron = function(n) {
         if (actual != trainElement.answer) {
             correctWeights(trainElement, actual);
         }
-        console.log(this.weights);
     }
 
     correctWeights = function(trainElement, answer) {
