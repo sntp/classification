@@ -6,6 +6,7 @@ const BLUE_CLASS = "btn-info",
       CHECKED_ATTR = "checked";
 
 var plot = $("#plot"),
+    tooltip = $("#tooltip"),
     redButton = $("#red-class"),
     blueButton = $("#blue-class"),
     trainButton = $("#train-button"),
@@ -83,6 +84,19 @@ plot.bind("plotclick", function (event, pos, item) {
     }
 });
 
+plot.bind("plothover", function (event, pos, item) {
+    if (item) {
+        var x = item.datapoint[0].toFixed(3),
+            y = item.datapoint[1].toFixed(3);
+
+        tooltip.html("X: " + x + ", Y: " + y)
+            .css({top: item.pageY, left: item.pageX})
+            .fadeIn(200);
+    } else {
+        tooltip.hide();
+    }
+});
+
 trainButton.click(function () {
     graphManager.setMode(MODE.TRAIN);
     trainButton.addClass(ACTIVE_CLASS);
@@ -101,7 +115,7 @@ classifyButton.click(function () {
 
 redButton.click(function() {
     try {
-        graphManager.setClass(graphManager.RED);
+        graphManager.setClass(POINT_CLASS.RED);
         redButton.addClass(RED_CLASS);
         blueButton.removeClass(BLUE_CLASS);
     } catch(e) {
@@ -111,7 +125,7 @@ redButton.click(function() {
 
 blueButton.click(function () {
     try {
-        graphManager.setClass(graphManager.BLUE);
+        graphManager.setClass(POINT_CLASS.BLUE);
         redButton.removeClass(RED_CLASS);
         blueButton.addClass(BLUE_CLASS);
     } catch(e) {
@@ -145,7 +159,6 @@ showLine.change (function () {
         graphManager.setShowLine(false);
     }
 });
-
 
 var parseFloatOrThrowError = function(n) {
     if (/^[-+]?(\d+|\d*\.\d+)$/.test(n)) {

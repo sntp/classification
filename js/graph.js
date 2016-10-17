@@ -29,6 +29,7 @@ var Graph = function(id, size) {
         }], 
         { 
             grid: {
+                hoverable: true,
                 clickable: true
             },
             yaxis: {
@@ -42,7 +43,6 @@ var Graph = function(id, size) {
         });
 
     this.update = function() {
-        console.log(this);
         this.plot.setData([
             {
                 data: this.reds, 

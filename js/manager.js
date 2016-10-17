@@ -9,31 +9,25 @@ var MODE = {
 };
 
 var GraphManager = function(id) {
-    var classes = {
-        red: 1,
-        blue: -1
-    };
-    this.RED = classes.red;
-    this.BLUE = classes.blue;
     var size = 10;
     this.graph = new Graph(id, size);
     this.neuron = new Neuron(3);
     this.mode = "train";
-    this.currentClass = classes.red;
+    this.currentClass = POINT_CLASS.RED;
 
     this.setMode = function(mode) {
-        if (mode == "train" || mode == "classify") {
+        if (mode == MODE.TRAIN || mode == MODE.CLASSIFY) {
             this.mode = mode;
         } else {
-            throw new Error();
+            throw new Error("No such mode: " + mode);
         }
     }
 
     this.setClass = function(c) {
-        if (c == classes.red || c == classes.blue) {
+        if (c == POINT_CLASS.RED || c == POINT_CLASS.BLUE) {
             this.currentClass = c;
         } else {
-            throw new Error();
+            throw new Error("No such class: " + c);
         }
     }
 
@@ -47,12 +41,12 @@ var GraphManager = function(id) {
 
     this.train = function(x, y) {
         this.neuron.train(new TrainElement([x, y, 1.0], this.currentClass));
-        if (this.currentClass == classes.red) {
+        if (this.currentClass == POINT_CLASS.RED) {
             this.graph.addRed(x, y);
-        } else if (this.currentClass == classes.blue) {
+        } else if (this.currentClass == POINT_CLASS.BLUE) {
             this.graph.addBlue(x, y);
         } else {
-            throw new Error();
+            throw new Error("Unexpected class id");
         }
         updateLine();
     }
@@ -63,20 +57,19 @@ var GraphManager = function(id) {
             w3 = this.neuron.weights[2],
             y1 = 0.0,
             y2 = 1.0,
-            x1 = -(w2*y1 + w3)/w1,
-            x2 = -(w2*y2 + w3)/w1;
+            x1 = -(w2*y1 + w3) / w1,
+            x2 = -(w2*y2 + w3) / w1;
         this.graph.setLine(x1, y1, x2, y2);
     }.bind(this);
-    updateLine();
 
     this.classify = function(x, y) {
         var c = this.neuron.classify([x, y, 1.0]);
-        if (c == classes.red) {
+        if (c == POINT_CLASS.RED) {
             this.graph.addRed(x, y);
-        } else if (c == classes.blue) {
+        } else if (c == POINT_CLASS.BLUE) {
             this.graph.addBlue(x, y);
         } else {
-            throw new Error("No such class " + c);
+            throw new Error("Unexpected class was aquared from neuron: " + c);
         }
     }
 
@@ -89,9 +82,9 @@ var GraphManager = function(id) {
     }.bind(this);
 
     this.input = function(x, y) {
-        if (this.mode == "train") {
+        if (this.mode == MODE.TRAIN) {
             this.train(x, y);
-        } else if (this.mode == "classify") {
+        } else if (this.mode == MODE.CLASSIFY) {
             this.classify(x, y);
         }
     }

@@ -1,0 +1,30 @@
+.container {
+    padding-top: 10px;
+    height: 100vh;
+}
+
+.row {
+    height: 100%;
+}
+
+.col-md-8 {
+    height: 100%;
+}
+
+#plot {
+    height: 100%;
+    width: 100%;
+}
+
+.weight {
+    padding-top: 10px;
+}
+
+#tooltip {
+    position: absolute;
+    display: none;
+    border: 1px solid #fdd;
+    padding: 2px;
+    background-color: #fee;
+    opacity: 0.80;
+}

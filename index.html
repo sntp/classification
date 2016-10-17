@@ -3,17 +3,18 @@
 <head>
     <title>Learning demonstration</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
-    <link rel="stylesheet" type="text/css" href="style.css" />
+    <link rel="stylesheet" type="text/css" href="./css/style.css" />
     <meta charset="utf-8" />
     <!--[if lte IE 8]><script language="javascript" type="text/javascript" src="excanvas.min.js"></script><![endif]-->
-    <script src="jquery.min.js"></script>
-    <script src="jquery.flot.min.js"></script>
+    <script src="./js/jquery.min.js"></script>
+    <script src="./js/jquery.flot.min.js"></script>
 </head>
 <body>
     <div class="container">
         <div class="row">
             <div class="col-md-8">
                 <div id="plot"></div>
+                <div id="tooltip"></div>
             </div>
             <div class="col-md-4 right-menu">
                 <div class="panel panel-default">
@@ -80,10 +81,9 @@
             </div>
         </div>
     </div>
-    <script src="script.js"></script>
-    <script src="plot.js"></script>
-    <script src="manager.js"></script>
-    <script src="controller.js"></script>
-    <!-- <script src="neuronTest.js"></script> -->
+    <script src="./js/neuron.js"></script>
+    <script src="./js/graph.js"></script>
+    <script src="./js/manager.js"></script>
+    <script src="./js/controller.js"></script>
 </body>
 </html>
