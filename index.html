@@ -2,55 +2,88 @@
 <html>
 <head>
     <title>Learning demonstration</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
     <link rel="stylesheet" type="text/css" href="style.css" />
     <meta charset="utf-8" />
+    <!--[if lte IE 8]><script language="javascript" type="text/javascript" src="excanvas.min.js"></script><![endif]-->
+    <script src="jquery.min.js"></script>
+    <script src="jquery.flot.min.js"></script>
 </head>
 <body>
-    <div id="container">
-        <div id="header">
-            <h1>How perceptron learns</h1>
-        </div>
-        <div id="graph-section">
-            <div id="graph" class="canvas-box">
-                <canvas id="graph-canvas"></canvas>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-8">
+                <div id="plot"></div>
             </div>
-            <div id="neuron" class="canvas-box">
-                <canvas id="neuron-canvas"></canvas>
+            <div class="col-md-4 right-menu">
+                <div class="panel panel-default">
+                    <div class="panel-body">
+                        <div class="btn-group" role="group">
+                            <button class="btn btn-default" id="train-button" type="button">Train</button>
+                            <button class="btn btn-default" id="classify-button" type="button">Classify</button>
+                        </div>
+
+                        <div class="btn-group" role="group">
+                            <button class="btn btn-default" id="red-class" type="button">Red</button>
+                            <button class="btn btn-default" id="blue-class" type="button">Blue</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="panel panel-default">
+                    <div class="panel-body">
+                        <div class="checkbox">
+                            <label>
+                                <input id="show-line" type="checkbox" checked> Show line
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="panel panel-default">
+                    <div class="panel-heading">Step size <span id="step-size" class="badge">4</span></div>
+                    <div class="panel-body">
+                        <input id="step" type="range" min="0.01" max="2" step="0.01">
+                    </div>
+                </div>
+
+                <div class="panel panel-default">
+                    <div class="panel-heading">Weights</div>
+                    <div class="panel-body">
+                        <div class="input-group weight">
+                            <input id="w1" type="text" class="form-control">
+                            <span class="input-group-btn">
+                                <button class="btn btn-default" type="button">Edit</button>
+                            </span>
+                        </div>
+
+                        <div class="input-group weight">
+                            <input id="w2" type="text" class="form-control">
+                            <span class="input-group-btn">
+                                <button class="btn btn-default" type="button">Edit</button>
+                            </span>
+                        </div>
+
+                        <div class="input-group weight">
+                            <input id="w3" type="text" class="form-control">
+                            <span class="input-group-btn">
+                                <button class="btn btn-default" type="button">Edit</button>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="panel panel-default">
+                    <div class="panel-body">
+                        <button class="btn btn-primary" id="reset" type="button">Reset</button>
+                    </div>
+                </div>
             </div>
-        </div>
-        <div id="tools">
-            <input type="file" id="input" hidden/>
-            <span class="tool" id="import">IMPORT</span>
-            <span class="tool" id="export">EXPORT</span>
-            <span class="tool" id="begin">BEGIN</span>
-            <span class="tool" id="back">BACK</span>
-            <span class="tool" id="forward">FORVARD</span>
-        </div>
-        <div id="table-section">
-            <table>
-                <thead>
-                    <tr>
-                        <td>X</td>
-                        <td>Y</td>
-                        <td>Class</td>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>1</td>
-                        <td>2</td>
-                        <td>1</td>
-                    </tr>
-                    <tr>
-                        <td>-1</td>
-                        <td>-1</td>
-                        <td>0</td>
-                    </tr>
-                </tbody>
-            </table>
         </div>
     </div>
     <script src="script.js"></script>
-    <script src="neuronTest.js"></script>
+    <script src="plot.js"></script>
+    <script src="manager.js"></script>
+    <script src="controller.js"></script>
+    <!-- <script src="neuronTest.js"></script> -->
 </body>
 </html>
