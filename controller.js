@@ -16,15 +16,26 @@ var plot = $("#plot"),
     showLine = $("#show-line"),
     w1 = $("#w1"),
     w2 = $("#w2"),
-    w3 = $("#w3");
+    w3 = $("#w3"),
+    editW1Button = $("#edit-w1"),
+    editW2Button = $("#edit-w2"),
+    editW3Button = $("#edit-w3");
 
 var graphManager = new GraphManager("#plot");
-graphManager.update();
 
 var updateWeights = function() {
     w1.val(graphManager.neuron.weights[0]);
     w2.val(graphManager.neuron.weights[1]);
     w3.val(graphManager.neuron.weights[2]);
+}
+
+var update = function() {
+    try {
+        graphManager.update();
+        updateWeights();
+    } catch(e) {
+        alert(e);
+    }
 }
 
 var init = function() {
@@ -47,7 +58,7 @@ var init = function() {
             throw new Error("INITIALIZATION ERROR: Unknown class '" + currentClass + "'");
         }
 
-        updateWeights();
+        update();
         stepSlider.val(graphManager.neuron.step);
         stepSlider.change();
 
@@ -66,8 +77,7 @@ $(document).ready(init);
 plot.bind("plotclick", function (event, pos, item) {
     try {
         graphManager.input(pos.x, pos.y);
-        graphManager.update();
-        updateWeights();
+        update();
     } catch(e) {
         alert(e);
     }
@@ -134,4 +144,39 @@ showLine.change (function () {
     } else {
         graphManager.setShowLine(false);
     }
+});
+
+
+var parseFloatOrThrowError = function(n) {
+    if (/^[-+]?(\d+|\d*\.\d+)$/.test(n)) {
+        return parseFloat(n);
+    }
+    throw new Error("Parsing Error: " + n + " is not a float.");
+}
+
+editW1Button.click(function () {
+    try {
+        graphManager.neuron.weights[0] = parseFloatOrThrowError(w1.val());
+    } catch(e) {
+        alert(e);
+    }
+    update();
+});
+
+editW2Button.click(function () {
+    try {
+        graphManager.neuron.weights[1] = parseFloatOrThrowError(w2.val());
+    } catch(e) {
+        alert(e);
+    }
+    update();
+});
+
+editW3Button.click(function () {
+    try {
+        graphManager.neuron.weights[2] = parseFloatOrThrowError(w3.val());
+    } catch(e) {
+        alert(e);
+    }
+    update();
 });
