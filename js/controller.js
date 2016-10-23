@@ -1,121 +1,83 @@
 const BLUE_CLASS = "btn-info",
       RED_CLASS = "btn-danger",
-      DEFAULT_CLASS = "btn-default",
-      ACTIVE_CLASS = "active",
-      DISABLED_ATTR = "disabled",
-      CHECKED_ATTR = "checked";
+      INVISIBLE_CLASS = "invisible",
+      ACTIVE_CLASS = "active";
 
-var plot = $("#plot"),
+var trainingScreen = $("#training-screen"),
+    visualScreen = $("#visual-screen"),
+    trainGraph = $("#train-graph"),
+    visualGrapg = $("#visual-graph"),
     tooltip = $("#tooltip"),
     redButton = $("#red-class"),
     blueButton = $("#blue-class"),
-    trainButton = $("#train-button"),
-    classifyButton = $("#classify-button"),
+    tooltip = $("#tooltip"),
     resetButton = $("#reset"),
+    goToTrainingButton = $("#train"),
+    tableContainer = $("#steps"),
     stepSlider = $("#step"),
-    stepBadge = $("#step-size"),
-    showLine = $("#show-line"),
-    w1 = $("#w1"),
-    w2 = $("#w2"),
-    w3 = $("#w3"),
-    editW1Button = $("#edit-w1"),
-    editW2Button = $("#edit-w2"),
-    editW3Button = $("#edit-w3");
+    stepBadge = $("#step-size")
+    again = $("#again");
 
-var graphManager = new GraphManager("#plot");
+const GRAPH_SIZE = 10;
+var graph = new Graph("#train-graph", GRAPH_SIZE);
+var graphManager = new GraphManager("#visual-graph");
+var table = new Table();
+var currentPointClass = POINT_CLASS.RED;
 
-var updateWeights = function() {
-    w1.val(graphManager.neuron.weights[0]);
-    w2.val(graphManager.neuron.weights[1]);
-    w3.val(graphManager.neuron.weights[2]);
-}
-
-var update = function() {
+var trainingInit = function () {
     try {
-        graphManager.update();
-        updateWeights();
-    } catch(e) {
-        alert(e);
-    }
-}
-
-var init = function() {
-    try {
-        var mode = graphManager.mode;
-        if (mode == MODE.TRAIN) {
-            trainButton.click();
-        } else if (mode == MODE.CLASSIFY) {
-            classifyButton.click();
-        } else {
-            throw new Error("INITIALIZATION ERROR: Unknown mode '" + mode + "'");
-        }
-
-        var currentClass = graphManager.currentClass;
-        if (currentClass == POINT_CLASS.RED) {
-            redButton.addClass(RED_CLASS);
-        } else if (currentClass == POINT_CLASS.BLUE) {
-            blueButton.addClass(BLUE_CLASS);
+        if (currentPointClass == POINT_CLASS.RED) {
+            redButton.click();
+        } else if (currentPointClass == POINT_CLASS.BLUE) {
+            blueButton.click();
         } else {
             throw new Error("INITIALIZATION ERROR: Unknown class '" + currentClass + "'");
         }
-
-        update();
         stepSlider.val(graphManager.neuron.step);
         stepSlider.change();
-
-        if (graphManager.getShowLine()) {
-            showLine.attr(CHECKED_ATTR, CHECKED_ATTR);
-        } else {
-            showLine.removeAttr(CHECKED_ATTR);
-        }
     } catch(e) {
         alert(e);
     }
 }
 
-$(document).ready(init);
+$(document).ready(trainingInit);
 
-plot.bind("plotclick", function (event, pos, item) {
+$(window).resize(function () {
+    graph.update();
+    graphManager.update();
+});
+
+trainGraph.bind("plotclick", function (event, pos, item) {
     try {
-        graphManager.input(pos.x, pos.y);
-        update();
+        if (currentPointClass == POINT_CLASS.RED) {
+            graph.addRed(pos.x, pos.y);
+        } else if (currentPointClass == POINT_CLASS.BLUE) {
+            graph.addBlue(pos.x, pos.y);
+        } else {
+            throw new Error("Unknown class '" + currentClass + "'");
+        }
+        graph.update();
     } catch(e) {
         alert(e);
     }
 });
 
-plot.bind("plothover", function (event, pos, item) {
+$(".graph").bind("plothover", function (event, pos, item) {
     if (item) {
-        var x = item.datapoint[0].toFixed(3),
-            y = item.datapoint[1].toFixed(3);
+        var x = item.datapoint[0],
+            y = item.datapoint[1];
 
         tooltip.html("X: " + x + ", Y: " + y)
-            .css({top: item.pageY, left: item.pageX})
+            .css({top: item.pageY - 10, left: item.pageX + 10})
             .fadeIn(200);
     } else {
         tooltip.hide();
     }
 });
 
-trainButton.click(function () {
-    graphManager.setMode(MODE.TRAIN);
-    trainButton.addClass(ACTIVE_CLASS);
-    classifyButton.removeClass(ACTIVE_CLASS);
-    redButton.removeAttr(DISABLED_ATTR);
-    blueButton.removeAttr(DISABLED_ATTR);
-});
-
-classifyButton.click(function () {
-    graphManager.setMode(MODE.CLASSIFY);
-    trainButton.removeClass(ACTIVE_CLASS);
-    classifyButton.addClass(ACTIVE_CLASS);
-    redButton.attr(DISABLED_ATTR, DISABLED_ATTR);
-    blueButton.attr(DISABLED_ATTR, DISABLED_ATTR);
-});
-
 redButton.click(function() {
     try {
-        graphManager.setClass(POINT_CLASS.RED);
+        currentPointClass = POINT_CLASS.RED;
         redButton.addClass(RED_CLASS);
         blueButton.removeClass(BLUE_CLASS);
     } catch(e) {
@@ -125,7 +87,7 @@ redButton.click(function() {
 
 blueButton.click(function () {
     try {
-        graphManager.setClass(POINT_CLASS.BLUE);
+        currentPointClass = POINT_CLASS.BLUE;
         redButton.removeClass(RED_CLASS);
         blueButton.addClass(BLUE_CLASS);
     } catch(e) {
@@ -134,12 +96,78 @@ blueButton.click(function () {
 });
 
 resetButton.click(function () {
-    try {
-        graphManager.reset();
-        init();
-    } catch(e) {
-        alert(e);
+    graph.reset();
+    graph.update();
+});
+
+var updateTable = function(activeElementId) {
+    tableContainer.html("");
+    for (var i = 0; i < table.points.length; i++) {
+        tableContainer.append(table.points[i].toHtml(activeElementId == i));
     }
+}
+
+goToTrainingButton.click(function () {
+    graphManager.reset();
+    table.reset();
+    table.addPoint(new TableEntry(0, 
+        undefined,
+        undefined,
+        undefined,
+        graphManager.neuron.weights,
+        undefined,
+        undefined));
+
+    for (var i = 0; i < graph.consecutiveInput.length; i++) {
+        table.addPoint(new TableEntry(i+1,
+            graph.consecutiveInput[i].input,
+            graph.consecutiveInput[i].class,
+            undefined,
+            undefined,
+            undefined,
+            undefined));
+    }
+    trainingScreen.addClass(INVISIBLE_CLASS);
+    visualScreen.removeClass(INVISIBLE_CLASS);
+    graphManager.update();
+    updateTable(0);
+});
+
+
+$(document).on("click", ".list-group-item", function () {
+    var stepNumber = parseInt($(this).find("span").text());
+    graphManager.reset();    
+    for (var i = 1; i <= stepNumber; i++) {
+        var entry = table.points[i];
+        if (entry.stepSize) {
+            graphManager.neuron.step = entry.stepSize;
+        } else {
+            graphManager.neuron.step = stepSlider.val();
+        }
+        graphManager.setClass(entry.expectedClassName);
+        var actualClass = graphManager.neuron.classify(entry.input);
+        var weights = graphManager.neuron.weights.slice();
+        graphManager.train(entry.input[0], entry.input[1]);
+        table.points[i] = new TableEntry(i,
+            entry.input,
+            entry.expectedClassName,
+            actualClass,
+            weights,
+            graphManager.neuron.step,
+            graphManager.neuron.weights.slice());
+    }
+    for (var i = stepNumber + 1; i < table.points.length; i++) {
+        table.points[i].actualClassName = undefined;
+        table.points[i].weights = undefined;
+        table.points[i].stepSize = undefined;
+        table.points[i].correcedWeights = undefined;
+    }
+    updateTable(stepNumber);
+    graphManager.update();
+
+    tableContainer.scrollTop(0);
+    var activeElement = $("." + ACTIVE_CLASS).first();
+    tableContainer.scrollTop(activeElement.offset().top - tableContainer.offset().top - (tableContainer.height() - activeElement.height())/2.0);
 });
 
 stepSlider.on("input change", function () {
@@ -152,44 +180,6 @@ stepSlider.on("input change", function () {
     }
 })
 
-showLine.change (function () {
-    if ($(this).attr(CHECKED_ATTR)) {
-        graphManager.setShowLine(true);
-    } else {
-        graphManager.setShowLine(false);
-    }
-});
-
-var parseFloatOrThrowError = function(n) {
-    if (/^[-+]?(\d+|\d*\.\d+)$/.test(n)) {
-        return parseFloat(n);
-    }
-    throw new Error("Parsing Error: " + n + " is not a float.");
-}
-
-editW1Button.click(function () {
-    try {
-        graphManager.neuron.weights[0] = parseFloatOrThrowError(w1.val());
-    } catch(e) {
-        alert(e);
-    }
-    update();
-});
-
-editW2Button.click(function () {
-    try {
-        graphManager.neuron.weights[1] = parseFloatOrThrowError(w2.val());
-    } catch(e) {
-        alert(e);
-    }
-    update();
-});
-
-editW3Button.click(function () {
-    try {
-        graphManager.neuron.weights[2] = parseFloatOrThrowError(w3.val());
-    } catch(e) {
-        alert(e);
-    }
-    update();
+again.click(function () {
+    location.reload();
 });

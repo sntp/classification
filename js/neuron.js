@@ -36,6 +36,7 @@ var Neuron = function(n) {
         for (var i = 0; i < this.weights.length; i++) {
             var inputValue = (i < trainElement.values.length)? trainElement.values[i] : 1.0;
             this.weights[i] += correction * inputValue;
+            this.weights[i] = parseFloat(this.weights[i].toFixed(2));
         }
     }.bind(this);
 

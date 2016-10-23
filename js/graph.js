@@ -8,6 +8,7 @@ var Graph = function(id, size) {
     this.reds = [];
     this.blues = [];
     this.line = [];
+    this.consecutiveInput = [];
     this.plot = $.plot(id, [
         {
             data: [], 
@@ -43,26 +44,39 @@ var Graph = function(id, size) {
         });
 
     this.update = function() {
-        this.plot.setData([
-            {
-                data: this.reds, 
-                points: {
-                    show: true
-                }
-            },
-            { 
-                data: this.blues, 
-                points: {
-                    show: true
-                }
-            },
-            { 
-                data: this.line, 
-                lines: {
-                    show: showLine
-                }
+        this.plot = $.plot(id, [
+        {
+            data: this.reds, 
+            points: {
+                show: true
             }
-        ]);
+        },
+        { 
+            data: this.blues, 
+            points: {
+                show: true
+            }
+        },
+        { 
+            data: this.line, 
+            lines: {
+                show: showLine
+            }
+        }], 
+        { 
+            grid: {
+                hoverable: true,
+                clickable: true
+            },
+            yaxis: {
+                min: -size,
+                max: size
+            },
+            xaxis: {
+                min: -size,
+                max: size
+            }
+        });
         this.plot.draw();
     }
 
@@ -82,14 +96,21 @@ var Graph = function(id, size) {
         this.reds = [];
         this.blues = [];
         this.line = [];
+        this.consecutiveInput = [];
     }
 
     this.addRed = function(x, y) {
+        x = parseFloat(x.toFixed(2));
+        y = parseFloat(y.toFixed(2));
         this.reds.push([x, y]);
+        this.consecutiveInput.push({input: [x, y, 1.0], class: POINT_CLASS.RED});
     }
 
     this.addBlue = function(x, y) {
+        x = parseFloat(x.toFixed(2));
+        y = parseFloat(y.toFixed(2));
         this.blues.push([x, y]);
+        this.consecutiveInput.push({input: [x, y, 1.0], class: POINT_CLASS.BLUE});
     }
 
     this.getShowLine = function() {

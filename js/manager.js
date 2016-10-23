@@ -3,6 +3,11 @@ var POINT_CLASS = {
     BLUE: -1
 };
 
+var CLASS_NAME = {
+    "1": "RED (1)",
+    "-1": "BLUE (-1)"
+};
+
 var MODE = {
     TRAIN: "train",
     CLASSIFY: "classify"

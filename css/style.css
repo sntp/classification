@@ -11,6 +11,10 @@
     height: 100%;
 }
 
+.col-md-4 {
+    height: 100%;
+}
+
 #plot {
     height: 100%;
     width: 100%;
@@ -27,4 +31,26 @@
     padding: 2px;
     background-color: #fee;
     opacity: 0.80;
+}
+
+.invisible {
+    display: none;
+}
+
+.graph {
+    height: 100%;
+    width: 100%;
+}
+
+.list-group {
+    height: calc(100% - 220px);
+    overflow: auto;
+}
+
+a:hover {
+    cursor: pointer;
+}
+
+a.active {
+    cursor: default;
 }
