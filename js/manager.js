@@ -45,11 +45,21 @@ var GraphManager = function(id) {
     }
 
     this.train = function(x, y) {
-        this.neuron.train(new TrainElement([x, y, 1.0], this.currentClass));
+        var input = [x, y, 1.0];
+        this.neuron.train(new TrainElement(input, this.currentClass));
+        var result = this.neuron.classify(input);
         if (this.currentClass == POINT_CLASS.RED) {
-            this.graph.addRed(x, y);
+            if (result == POINT_CLASS.RED) {
+                this.graph.addRed(x, y);
+            } else {
+                this.graph.addWrongRed(x, y);
+            }
         } else if (this.currentClass == POINT_CLASS.BLUE) {
-            this.graph.addBlue(x, y);
+            if (result == POINT_CLASS.BLUE) {
+                this.graph.addBlue(x, y);
+            } else {
+                this.graph.addWrongBlue(x, y);
+            }
         } else {
             throw new Error("Unexpected class id");
         }
@@ -77,12 +87,37 @@ var GraphManager = function(id) {
             throw new Error("Unexpected class was aquared from neuron: " + c);
         }
     }
+    
+    this.classifyWithWrongOnes = function(x, y, expectedClass) {
+        var result = this.neuron.classify([x, y, 1.0]);
+        if (expectedClass == POINT_CLASS.RED) {
+            if (result == POINT_CLASS.RED) {
+                this.graph.addRed(x, y);
+             } else {
+                this.graph.addWrongRed(x, y);
+             } 
+        } else if (expectedClass == POINT_CLASS.BLUE) {
+            if (result == POINT_CLASS.BLUE) {
+                this.graph.addBlue(x, y);
+            } else {
+                this.graph.addWrongBlue(x, y);
+            }
+        } else {
+            throw new Error("Unexpected class was aquared from neuron: " + c);
+        }
+    }
 
     reclassify = function() {
-        var points = this.graph.reds.concat(this.graph.blues);
+        var reds = this.graph.reds.concat(this.graph.wrongReds);
+        var blues = this.graph.blues.concat(this.graph.wrongBlues);
+        
         this.graph.reset();
-        for (var i = 0; i < points.length; i++) {
-            this.classify(points[i][0], points[i][1]);
+        for (var i = 0; i < reds.length; i++) {
+            this.classifyWithWrongOnes(reds[i][0], reds[i][1], POINT_CLASS.RED);
+        }
+        
+        for (var i = 0; i < blues.length; i++) {
+            this.classifyWithWrongOnes(blues[i][0], blues[i][1], POINT_CLASS.BLUE);
         }
     }.bind(this);
 

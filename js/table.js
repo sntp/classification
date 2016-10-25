@@ -83,7 +83,6 @@ var TableEntry = function(stepNumber,
             bodyText += ul.wrap("<fix/>").parent().html();
         }
 
-
         body.html(bodyText);
         a.append(body);
         return a;
@@ -99,5 +98,34 @@ var Table = function() {
 
     this.reset = function() {
         this.points = [];
+    }
+    
+    this.uniquElementsCount = function() {
+        var uniquElements = 0;
+        for (var k = 1; k < this.points.length; k++) {
+            var alreadyInList = false;
+            for (var i = 1; i < this.points.length; i++) {
+                if (k == i) {
+                    continue;
+                }
+                var equal = true;
+                for (var j = 1; j < this.points[k].input.length; j++) {
+                    if (this.points[i].input[j] != this.points[k].input[j]) {
+                        equal = false;
+                        break;
+                    }
+                }
+                equal &= (this.points[i].expectedClassName == this.points[k].expectedClassName);
+                if (equal) {
+                    alreyInList = true;
+                    break;
+                }
+            }
+            
+            if (!alreadyInList) {
+                uniquElements++;
+            }
+        }
+        return uniquElements;
     }
 }

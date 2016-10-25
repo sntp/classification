@@ -107,6 +107,24 @@ var updateTable = function(activeElementId) {
     }
 }
 
+var addPointsFromGraphToTable = function(start) {
+    for (var i = 0; i < graph.consecutiveInput.length; i++) {
+        table.addPoint(new TableEntry(i+start,
+            graph.consecutiveInput[i].input,
+            graph.consecutiveInput[i].class,
+            undefined,
+            undefined,
+            undefined,
+            undefined));
+    }
+}
+
+var classifyTableEntries = function() {
+    for (var i = 1; i <= table.uniquElementsCount(); i++) {
+        graphManager.classifyWithWrongOnes(table.points[i].input[0], table.points[i].input[1], table.points[i].expectedClassName);
+    }
+}
+
 goToTrainingButton.click(function () {
     graphManager.reset();
     table.reset();
@@ -117,18 +135,11 @@ goToTrainingButton.click(function () {
         graphManager.neuron.weights,
         undefined,
         undefined));
-
-    for (var i = 0; i < graph.consecutiveInput.length; i++) {
-        table.addPoint(new TableEntry(i+1,
-            graph.consecutiveInput[i].input,
-            graph.consecutiveInput[i].class,
-            undefined,
-            undefined,
-            undefined,
-            undefined));
-    }
+    addPointsFromGraphToTable(1);
     trainingScreen.addClass(INVISIBLE_CLASS);
     visualScreen.removeClass(INVISIBLE_CLASS);
+    
+    classifyTableEntries();
     graphManager.update();
     updateTable(0);
 });
@@ -136,7 +147,8 @@ goToTrainingButton.click(function () {
 
 $(document).on("click", ".list-group-item", function () {
     var stepNumber = parseInt($(this).find("span").text());
-    graphManager.reset();    
+    graphManager.reset();
+    classifyTableEntries();    
     for (var i = 1; i <= stepNumber; i++) {
         var entry = table.points[i];
         if (entry.stepSize) {
@@ -162,8 +174,15 @@ $(document).on("click", ".list-group-item", function () {
         table.points[i].stepSize = undefined;
         table.points[i].correcedWeights = undefined;
     }
+    
+    if (table.points.length - stepNumber <= 1) {
+        addPointsFromGraphToTable(table.points.length);
+    }
     updateTable(stepNumber);
     graphManager.update();
+    if (table.points[stepNumber].input != undefined) {
+        graphManager.graph.highlight(table.points[stepNumber].input[0], table.points[stepNumber].input[1]);
+    }
 
     tableContainer.scrollTop(0);
     var activeElement = $("." + ACTIVE_CLASS).first();
