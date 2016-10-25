@@ -15,15 +15,6 @@
     height: 100%;
 }
 
-#plot {
-    height: 100%;
-    width: 100%;
-}
-
-.weight {
-    padding-top: 10px;
-}
-
 #tooltip {
     position: absolute;
     display: none;

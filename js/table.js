@@ -91,6 +91,7 @@ var TableEntry = function(stepNumber,
 
 var Table = function() {
     this.points = [];
+    this.uniquElements = undefined;
 
     this.addPoint = function(tableEntry) {
         this.points.push(tableEntry);
@@ -101,6 +102,10 @@ var Table = function() {
     }
     
     this.uniquElementsCount = function() {
+        if (this.uniquElements != undefined) {
+            return this.uniquElements;
+        }
+
         var uniquElements = 0;
         for (var k = 1; k < this.points.length; k++) {
             var alreadyInList = false;
@@ -126,6 +131,7 @@ var Table = function() {
                 uniquElements++;
             }
         }
+        this.uniquElements = uniquElements;
         return uniquElements;
     }
 }

@@ -67,9 +67,9 @@ var GraphManager = function(id) {
     }
 
     updateLine = function() {
-        var w1 = this.neuron.weights[0],
-            w2 = this.neuron.weights[1],
-            w3 = this.neuron.weights[2],
+        var w1 = this.neuron.weights[0] || 0.01,
+            w2 = this.neuron.weights[1] || 0.01,
+            w3 = this.neuron.weights[2] || 0.01,
             y1 = 0.0,
             y2 = 1.0,
             x1 = -(w2*y1 + w3) / w1,
